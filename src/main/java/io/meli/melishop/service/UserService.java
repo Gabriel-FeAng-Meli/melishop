@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import io.meli.melishop.db.Db;
@@ -25,6 +26,7 @@ public class UserService {
     @Autowired
     Db db;
 
+    @Cacheable
     public Map<String, List<String>> recommend(Long userId, String strategy) {
         
         User user = db.getUserById(userId);
