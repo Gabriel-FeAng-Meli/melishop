@@ -13,8 +13,7 @@ import io.meli.melishop.model.User;
 
 public class SimilarityStrategy implements RecommendationStrategy {
 
-
-    double distinctionRatio;
+    double compatibilityRatio;
     double similarityRatio;
 
     public List<String> recommendProducts(User userA) {
@@ -54,17 +53,17 @@ public class SimilarityStrategy implements RecommendationStrategy {
         }
     }
 
-    private Double applyDistinctionFactor(Double distinction, Integer quantityA) {
+    private Double applyCompatibilityFactor(Double compatibility, Integer quantityA) {
 
         double distinctionFactor =  Math.log(quantityA) / 10;
         
-        return distinction * (1 - distinctionFactor);
+        return compatibility * (1 - distinctionFactor);
     }
 
     private Double calculateSimilarity(User userA, User userB) {
 
         similarityRatio = 0;
-        distinctionRatio = 1;
+        compatibilityRatio = 1;
 
         Set<String> productsInCommon = new HashSet<>();
         Map<String, Integer> productsOnlyOneUserHas = new HashMap<>();
@@ -88,10 +87,10 @@ public class SimilarityStrategy implements RecommendationStrategy {
         });
 
         productsOnlyOneUserHas.forEach((key, value) -> {
-            distinctionRatio = applyDistinctionFactor(distinctionRatio, value);
+            compatibilityRatio = applyCompatibilityFactor(compatibilityRatio, value);
         });
 
-        Double result = similarityRatio * distinctionRatio;
+        Double result = similarityRatio * compatibilityRatio;
         return result;
     }
 
