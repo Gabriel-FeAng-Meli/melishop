@@ -7,24 +7,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
 
 import io.meli.melishop.db.Db;
 import io.meli.melishop.model.User;
 
 public class SimilarityStrategy implements RecommendationStrategy {
 
-    @Autowired
-    Db db;
 
-        
+    double distinction = 1;
+    double similarity = 1;
+
     public List<String> recommendProducts(User userA) {
 
-        List<Long> userIds = List.of(1L, 2L, 3L);
-        userIds.remove(userA.getId());
+        Map<User, Long> allUsers = Db.getAllUsers();
 
-        User userB = db.getUserById(userIds.get(0));
-        User userC = db.getUserById(userIds.get(1));
+        List<User> otherUsers = new ArrayList<>();
+        allUsers.forEach((user, id) -> {
+            if (id != userA.getId()) {
+                otherUsers.add(user);
+            }
+        });
+
+        User userB = otherUsers.get(0);
+        User userC = otherUsers.get(1);
 
         Double similarityAB = calculateSimilarity(userA, userB);
         Double similarityAC = calculateSimilarity(userA, userC);
@@ -40,24 +45,26 @@ public class SimilarityStrategy implements RecommendationStrategy {
         return topThree;
     }
 
-    private void applySimilarityFactor(Double similarityFactor, Integer quantityA, Integer quantityB) {
+    private Double applySimilarityFactor(Double similarity, Integer quantityA, Integer quantityB) {
 
         if (quantityA >= quantityB) {
-            similarityFactor *= quantityB.doubleValue()/quantityA.doubleValue(); 
+            return similarity += quantityB.doubleValue()/quantityA.doubleValue(); 
         } else {
-            similarityFactor *= quantityA.doubleValue()/quantityB.doubleValue();
+            return similarity += quantityA.doubleValue()/quantityB.doubleValue();
         }
     }
 
-    private void applyDistinctionFactor(Double distinctionFactor, Integer quantityA) {
+    private Double applyDistinctionFactor(Double distinction, Integer quantityA) {
 
-        distinctionFactor *= 1 / quantityA;
+        double distinctionFactor =  Math.log(quantityA) / 10;
+        
+        return distinction * (1 - distinctionFactor);
     }
 
     private Double calculateSimilarity(User userA, User userB) {
 
-        double distinction = 1;
-        double similarity = 1;
+        similarity = 0;
+        distinction = 1;
 
         Set<String> productsInCommon = new HashSet<>();
         Map<String, Integer> productsOnlyOneUserHas = new HashMap<>();
@@ -77,11 +84,11 @@ public class SimilarityStrategy implements RecommendationStrategy {
         });
 
         productsInCommon.forEach(product -> {
-            applySimilarityFactor(similarity, userA.getHistory().get(product), userB.getHistory().get(product));
+            similarity = applySimilarityFactor(similarity, userA.getHistory().get(product), userB.getHistory().get(product));
         });
 
         productsOnlyOneUserHas.forEach((key, value) -> {
-            applyDistinctionFactor(distinction, value);
+            distinction = applyDistinctionFactor(distinction, value);
         });
 
         Double result = similarity * distinction;

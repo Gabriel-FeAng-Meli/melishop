@@ -29,7 +29,7 @@ public class UserService {
     @Cacheable
     public Map<String, List<String>> recommend(Long userId, String strategy) {
         
-        User user = db.getUserById(userId);
+        User user = Db.getUserById(userId);
 
         List<String> recommendation = chooseStrategy.get(strategy).recommendProducts(user);
 
