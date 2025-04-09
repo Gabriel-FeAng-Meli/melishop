@@ -28,7 +28,7 @@ public class RecommendationControllerTest {
     private MockMvcTester mvc;
 
     @Test
-    void testRecommend() throws Exception {
+    void testRecommend_HISTORY_USER_1() throws Exception {
 
         String expectedResponse = mapper.writeValueAsString(Map.of("Recommended products for you, considering HISTORY", List.of("paper","apple","banana")));
 
@@ -38,6 +38,90 @@ public class RecommendationControllerTest {
 
         assertEquals(expectedResponse, responseContent);
         assertEquals(200, response.getStatus());
+
+    }
+
+
+    @Test
+    void testRecommend_HISTORY_USER_2() throws Exception {
+
+        String expectedResponse = mapper.writeValueAsString(Map.of("Recommended products for you, considering HISTORY", List.of("rice","banana","milk")));
+
+        MockHttpServletResponse response = mvc.perform(get("/recommendation/{id}", "2").queryParam("strategy", "HISTORY").accept(MediaType.APPLICATION_JSON)).getResponse();
+
+        String responseContent = response.getContentAsString();
+
+        assertEquals(expectedResponse, responseContent);
+        assertEquals(200, response.getStatus());
+
+    }
+
+    @Test
+    void testRecommend_HISTORY_USER_3() throws Exception {
+
+        String expectedResponse = mapper.writeValueAsString(Map.of("Recommended products for you, considering HISTORY", List.of("milk","rice","banana")));
+
+        MockHttpServletResponse response = mvc.perform(get("/recommendation/{id}", "3").queryParam("strategy", "HISTORY").accept(MediaType.APPLICATION_JSON)).getResponse();
+
+        String responseContent = response.getContentAsString();
+
+        assertEquals(expectedResponse, responseContent);
+        assertEquals(200, response.getStatus());
+
+    }
+
+    @Test
+    void testRecommend_POPULARITY() throws Exception {
+
+        String expectedResponse = mapper.writeValueAsString(Map.of("Recommended products for you, considering POPULARITY", List.of("paper","rice","milk")));
+
+        MockHttpServletResponse response = mvc.perform(get("/recommendation/{id}", "1").queryParam("strategy", "POPULARITY").accept(MediaType.APPLICATION_JSON)).getResponse();
+
+        String responseContent = response.getContentAsString();
+
+        assertEquals(expectedResponse, responseContent);
+        assertEquals(200, response.getStatus());
+
+    }
+
+    @Test
+    void testRecommend_SIMILARITY() throws Exception {
+
+        String expectedResponse = mapper.writeValueAsString(Map.of("Recommended products for you, considering SIMILARITY", List.of("rice","banana","milk")));
+
+        MockHttpServletResponse response = mvc.perform(get("/recommendation/{id}", "1").queryParam("strategy", "SIMILARITY").accept(MediaType.APPLICATION_JSON)).getResponse();
+
+        String responseContent = response.getContentAsString();
+
+        assertEquals(expectedResponse, responseContent);
+        assertEquals(200, response.getStatus());
+
+    }
+
+    @Test
+    void testRecommend_NON_EXISTENT_USER() throws Exception {
+
+        MockHttpServletResponse response = mvc.perform(get("/recommendation/{id}", "7").queryParam("strategy", "").accept(MediaType.APPLICATION_JSON)).getResponse();
+
+        assertEquals(400, response.getStatus());
+
+    }
+
+    @Test
+    void testRecommend_EMPTY_STRING_STRATEGY() throws Exception {
+
+        MockHttpServletResponse response = mvc.perform(get("/recommendation/{id}", "1").queryParam("strategy", "").accept(MediaType.APPLICATION_JSON)).getResponse();
+
+        assertEquals(400, response.getStatus());
+
+    }
+
+    @Test
+    void testRecommend_NULL_STRATEGY() throws Exception {
+
+        MockHttpServletResponse response = mvc.perform(get("/recommendation/{id}", "1").accept(MediaType.APPLICATION_JSON)).getResponse();
+
+        assertEquals(400, response.getStatus());
 
     }
 }

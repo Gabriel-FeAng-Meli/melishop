@@ -15,13 +15,13 @@ public class OrderRepo {
         "tv", 3,
         "apple", 10,
         "banana", 20,
-        "milk", 30,
+        "milk", 15,
         "rice", 30
     );
 
     public static final Map<String, Integer> order_3 = Map.of(
         "banana", 5,
-        "milk", 10,
+        "milk", 25,
         "rice", 20
     );
 
