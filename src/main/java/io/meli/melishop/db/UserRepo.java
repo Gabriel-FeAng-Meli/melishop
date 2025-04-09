@@ -6,9 +6,9 @@ import io.meli.melishop.model.User;
 
 public class UserRepo {
     
-    static final User user_1 = new User(1L, OrderRepo.order_1);
-    static final User user_2 = new User(2L, OrderRepo.order_2);
-    static final User user_3 = new User(3L, OrderRepo.order_3);
+    public static final User user_1 = new User(1L, OrderRepo.order_1);
+    public static final User user_2 = new User(2L, OrderRepo.order_2);
+    public static final User user_3 = new User(3L, OrderRepo.order_3);
 
     public static User getUserById(Long id) {
         switch (id.toString()) {

@@ -40,7 +40,7 @@ public class SimilarityStrategy extends AbstractRecommendationStrategy {
         return recommendation;
     }
 
-    List<User> getAllUsersFromDbExcept(User userToIgnore) {
+    private List<User> getAllUsersFromDbExcept(User userToIgnore) {
         
         Map<User, Long> allUsers = UserRepo.getAllUsers();
         List<User> otherUsers = new ArrayList<>();
@@ -52,7 +52,7 @@ public class SimilarityStrategy extends AbstractRecommendationStrategy {
         return otherUsers;
     }
 
-    Double applySimilarityFactor(Double similarity, Integer quantityA, Integer quantityB) {
+    private Double applySimilarityFactor(Double similarity, Integer quantityA, Integer quantityB) {
         if (quantityA >= quantityB) {
             return similarity += quantityB.doubleValue()/quantityA.doubleValue(); 
         } else {
@@ -60,12 +60,12 @@ public class SimilarityStrategy extends AbstractRecommendationStrategy {
         }
     }
 
-    Double applyCompatibilityFactor(Double compatibility, Integer quantityA) {
+    private Double applyCompatibilityFactor(Double compatibility, Integer quantityA) {
         double distinctionFactor =  Math.log(quantityA) / 10;
         return compatibility * (1 - distinctionFactor);
     }
 
-    Double calculateSimilarity(User userA, User userB) {
+    private Double calculateSimilarity(User userA, User userB) {
         compatibilityRatio = 1;
 
         Set<String> productsInCommon = new HashSet<>();
