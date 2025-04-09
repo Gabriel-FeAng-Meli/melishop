@@ -10,14 +10,11 @@ public abstract class AbstractRecommendationStrategy implements RecommendationSt
     User userExample;
     Map<String, Integer> userHistoryORProduct;
 
-    public abstract List<String> recommendProducts(User user);
     public abstract List<String> createTopThree(Map<String, Integer> objectFromFakeDb);
-    public abstract String getStrategyType();
 
     final void createRecommendation() {
         createTopThree(userHistoryORProduct);
         recommendProducts(userExample);
-        getStrategyType();
     }
 
 }

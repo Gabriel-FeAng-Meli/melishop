@@ -7,8 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
-import io.meli.melishop.db.Db;
+import io.meli.melishop.db.UserRepo;
 import io.meli.melishop.model.User;
 import io.meli.melishop.util.MapUtils;
 
@@ -18,11 +17,6 @@ public class SimilarityStrategy extends AbstractRecommendationStrategy {
     double highestSimilarity;
     double compatibilityRatio;
     double similarityRatio;
-
-    @Override
-    public String getStrategyType() {
-        return "similarity";
-    }
 
     @Override
     public List<String> createTopThree(Map<String, Integer> mostSimilarUser) {
@@ -48,7 +42,7 @@ public class SimilarityStrategy extends AbstractRecommendationStrategy {
 
     List<User> getAllUsersFromDbExcept(User userToIgnore) {
         
-        Map<User, Long> allUsers = Db.getAllUsers();
+        Map<User, Long> allUsers = UserRepo.getAllUsers();
         List<User> otherUsers = new ArrayList<>();
         allUsers.forEach((user, id) -> {
             if (id != userToIgnore.getId()) {

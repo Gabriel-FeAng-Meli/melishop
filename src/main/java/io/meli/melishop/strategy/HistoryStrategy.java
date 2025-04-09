@@ -9,11 +9,6 @@ import io.meli.melishop.util.MapUtils;
 public class HistoryStrategy extends AbstractRecommendationStrategy {
 
     @Override
-    public String getStrategyType() {
-        return "history";
-    }
-
-    @Override
     public List<String> recommendProducts(User user) {
         List<String> recommendation = createTopThree(user.getHistory());
         return recommendation;

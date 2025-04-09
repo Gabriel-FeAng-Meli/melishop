@@ -8,6 +8,4 @@ public interface RecommendationStrategy {
     
     List<String> recommendProducts(User user);
 
-    String getStrategyType();
-    
 }

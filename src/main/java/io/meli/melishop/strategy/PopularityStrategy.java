@@ -3,21 +3,16 @@ package io.meli.melishop.strategy;
 import java.util.List;
 import java.util.Map;
 
-import io.meli.melishop.db.Db;
+import io.meli.melishop.db.ProductRepo;
 import io.meli.melishop.model.User;
 import io.meli.melishop.util.MapUtils;
 
 public class PopularityStrategy extends AbstractRecommendationStrategy {
 
     @Override
-    public String getStrategyType() {
-        return "popularity";
-    }
-
-    @Override
     public List<String> recommendProducts(User user) {
 
-        List<String> recommendation = createTopThree(Db.allProducts);
+        List<String> recommendation = createTopThree(ProductRepo.allProducts);
 
         return recommendation;
     }
