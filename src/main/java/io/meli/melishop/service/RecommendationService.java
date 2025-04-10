@@ -3,6 +3,7 @@ package io.meli.melishop.service;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -14,13 +15,16 @@ import io.meli.melishop.strategy.RecommendationStrategy;
 
 @Service
 public class RecommendationService {
+
+    @Autowired
+    RecommendationStrategyFactory factory;
     
     @Cacheable
     public Map<String, List<String>> recommend(Long userId, EnumStrategyType strategy) {
         
         User user = UserRepo.getUserById(userId);
         
-        RecommendationStrategy recommendationStrategy = new RecommendationStrategyFactory().createRecommendationStrategy(strategy);
+        RecommendationStrategy recommendationStrategy = factory.createRecommendationStrategy(strategy);
 
         List<String> recommendation = recommendationStrategy.recommendProducts(user);
 

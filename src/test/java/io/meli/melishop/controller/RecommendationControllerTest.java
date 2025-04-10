@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
@@ -28,6 +29,7 @@ public class RecommendationControllerTest {
     private MockMvcTester mvc;
 
     @Test
+    @Profile("history")
     void testRecommend_HISTORY_USER_1() throws Exception {
 
         String expectedResponse = mapper.writeValueAsString(Map.of("Recommended products for you, considering HISTORY", List.of("paper","apple","banana")));
