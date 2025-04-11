@@ -100,6 +100,7 @@ public class RecommendationControllerTest {
 
     }
 
+
     @Test
     void testRecommend_NON_EXISTENT_USER() throws Exception {
 
@@ -126,4 +127,5 @@ public class RecommendationControllerTest {
         assertEquals(400, response.getStatus());
 
     }
+
 }

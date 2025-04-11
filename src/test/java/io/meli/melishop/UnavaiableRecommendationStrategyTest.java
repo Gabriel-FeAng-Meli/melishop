@@ -1,0 +1,75 @@
+package io.meli.melishop;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Profile;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.web.servlet.assertj.MockMvcTester;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+
+import java.util.List;
+import java.util.Map;
+
+@SpringBootTest(properties = "spring.profiles.active=local")
+@AutoConfigureMockMvc
+public class UnavaiableRecommendationStrategyTest {
+
+    @Autowired
+    ObjectMapper mapper;
+
+    @Autowired
+    private MockMvcTester mvc;
+
+
+    @Test
+    @Profile("history")
+    void testRecommend_UnavailableStrategy() throws Exception {
+
+        String expectedResponse = mapper.writeValueAsString(Map.of("Recommended products for you, considering POPULARITY", List.of("The selected recommendation type is not avaiable")));
+
+        MockHttpServletResponse response = mvc.perform(get("/recommendation/{id}", "1").queryParam("strategy", "POPULARITY").accept(MediaType.APPLICATION_JSON)).getResponse();
+
+        String responseContent = response.getContentAsString();
+
+        assertEquals(expectedResponse, responseContent);
+        assertEquals(200, response.getStatus());
+
+    }
+
+
+    @Test
+    void testRecommend_NON_EXISTENT_USER() throws Exception {
+
+        MockHttpServletResponse response = mvc.perform(get("/recommendation/{id}", "7").queryParam("strategy", "").accept(MediaType.APPLICATION_JSON)).getResponse();
+
+        assertEquals(400, response.getStatus());
+
+    }
+
+    @Test
+    void testRecommend_EMPTY_STRING_STRATEGY() throws Exception {
+
+        MockHttpServletResponse response = mvc.perform(get("/recommendation/{id}", "1").queryParam("strategy", "").accept(MediaType.APPLICATION_JSON)).getResponse();
+
+        assertEquals(400, response.getStatus());
+
+    }
+
+    @Test
+    void testRecommend_NULL_STRATEGY() throws Exception {
+
+        MockHttpServletResponse response = mvc.perform(get("/recommendation/{id}", "1").accept(MediaType.APPLICATION_JSON)).getResponse();
+
+        assertEquals(400, response.getStatus());
+
+    }
+
+}
