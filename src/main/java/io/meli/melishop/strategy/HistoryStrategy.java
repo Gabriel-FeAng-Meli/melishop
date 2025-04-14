@@ -11,7 +11,7 @@ public class HistoryStrategy extends AbstractRecommendationStrategy {
 
     @Override
     public List<String> recommendProducts(User user) {
-        List<String> recommendation = createTopThree(user.getHistory());
+        List<String> recommendation = createTopThree(user.history());
         return recommendation;
     }
     

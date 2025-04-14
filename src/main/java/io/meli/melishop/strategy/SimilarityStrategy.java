@@ -11,7 +11,7 @@ import io.meli.melishop.util.MapUtils;
 
 public class SimilarityStrategy extends AbstractRecommendationStrategy {
 
-    User mostSimilarUser;
+    User mostSimilarUser = new User(null, null);
     double highestSimilarity;
     Double compatibilityRatio;
     Double similarityRatio;
@@ -26,6 +26,8 @@ public class SimilarityStrategy extends AbstractRecommendationStrategy {
     @Override
     public List<String> recommendProducts(User userWaitingRecommendation) {
 
+        highestSimilarity = 0.0;
+
         List<User> otherUsers = getAllUsersFromDbExcept(userWaitingRecommendation);
 
         otherUsers.forEach(otherUser -> {
@@ -36,14 +38,14 @@ public class SimilarityStrategy extends AbstractRecommendationStrategy {
                 mostSimilarUser = otherUser;
             }
         });
-        List<String> recommendation = createTopThree(mostSimilarUser.getHistory());
+        List<String> recommendation = createTopThree(mostSimilarUser.history());
         return recommendation;
     }
 
     private List<User> getAllUsersFromDbExcept(User userToIgnore) {
         
         List<User> otherUsers = UserRepo.getAllUsers().entrySet().stream()
-            .filter(entry -> entry.getValue() != userToIgnore.getId())
+            .filter(entry -> entry.getValue() != userToIgnore.id())
             .map(Map.Entry::getKey)
             .collect(Collectors.toList());
 
@@ -66,23 +68,23 @@ public class SimilarityStrategy extends AbstractRecommendationStrategy {
         similarityRatio = 0.0;
 
         List<String> productsInCommon = ProductRepo.allProducts.keySet().stream()
-            .filter(product -> userA.getHistory().containsKey(product) && userB.getHistory().containsKey(product))
+            .filter(product -> userA.history().containsKey(product) && userB.history().containsKey(product))
             .distinct()
             .collect(Collectors.toList());
         
         Map<String, Integer> productsOnlyOneUserHas = 
-            userA.getHistory().entrySet().stream()
-                .filter(entry -> !userB.getHistory().containsKey(entry.getKey()))
+            userA.history().entrySet().stream()
+                .filter(entry -> !userB.history().containsKey(entry.getKey()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         productsOnlyOneUserHas.putAll(
-            userB.getHistory().entrySet().stream()
-                .filter(entry -> !userA.getHistory().containsKey(entry.getKey()))
+            userB.history().entrySet().stream()
+                .filter(entry -> !userA.history().containsKey(entry.getKey()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
         );
 
         productsInCommon.forEach(product -> {
-            applySimilarityFactor(userA.getHistory().get(product), userB.getHistory().get(product));
+            applySimilarityFactor(userA.history().get(product), userB.history().get(product));
         });
 
         productsOnlyOneUserHas.values().forEach(quantity -> {
